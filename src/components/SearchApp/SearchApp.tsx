@@ -77,7 +77,7 @@ function SearchApp({ orgData, spaceData }: SearchAppProps) {
   };
 
   const [indexName, setIndexName] = useState<string>(
-    process.env.VITE_INDEX_NAME ?? 'measurements',
+    process.env.VITE_INDEX_NAME ?? 'measurements'
   );
   useEffect(() => {
     setIndexName(assembleIndexName());
@@ -87,6 +87,7 @@ function SearchApp({ orgData, spaceData }: SearchAppProps) {
   const [reducedIndexAttributes, setReducedIndexAttributes] = useState<
     string[]
   >([]);
+  const [isIniialSearch, setIsInitialSeach] = useState(true);
   const [criteria, setCriteria] = useState<Criteria[]>();
   const [selectedFilters, setSelectedFilters] = useState<Filter[]>([]);
   const [tableData, setTableData] = useState<MeasurementIndex[]>([]);
@@ -97,7 +98,7 @@ function SearchApp({ orgData, spaceData }: SearchAppProps) {
     MeasurementIndex | undefined
   >();
   const [searchDuration, setSearchDuration] = useState<number | undefined>(
-    undefined,
+    undefined
   );
   const [defaultColumnsVisibility, setDefaultColumnsVisibility] = useState({});
   const [isAdvancedSearchActive, setIsAdvancedSearchActive] = useState(false);
@@ -146,15 +147,15 @@ function SearchApp({ orgData, spaceData }: SearchAppProps) {
 
                 if (remainingItems > 0) {
                   cellContent.push(
-                    <div key="more-items" className="fst-italic small">
+                    <div key='more-items' className='fst-italic small'>
                       <br />
                       {formatMessage(
                         {
                           id: 'Search.more-items',
                         },
-                        { remainingItems },
+                        { remainingItems }
                       )}
-                    </div>,
+                    </div>
                   );
                 }
 
@@ -177,7 +178,7 @@ function SearchApp({ orgData, spaceData }: SearchAppProps) {
           'ErrorToast.title',
           response.status,
           response.statusText,
-          response.data.errorCode,
+          response.data.errorCode
         );
     });
   };
@@ -187,13 +188,14 @@ function SearchApp({ orgData, spaceData }: SearchAppProps) {
     const queryInput = {
       index_name: indexName.replace(
         '.',
-        '',
+        ''
       ) /* TODO remove, when implementation in Backend is updated */,
       resultProperties: [],
       filter: selectedFilters,
     };
 
     getMetaData(queryInput).then((response) => {
+      console.log(`queryInpunt: ${JSON.stringify(queryInput)}`);
       if (response.ok) {
         createColumns();
         setTableData(response.data.hits);
@@ -204,7 +206,7 @@ function SearchApp({ orgData, spaceData }: SearchAppProps) {
           'ErrorToast.title',
           response.status,
           response.statusText,
-          response.data.errorCode,
+          response.data.errorCode
         );
     });
   };
@@ -216,7 +218,7 @@ function SearchApp({ orgData, spaceData }: SearchAppProps) {
         if (response.ok) {
           const options: string[] = [];
           response.data.map((result: Criteria) =>
-            options.push(result.property),
+            options.push(result.property)
           );
           const sortedOptions = options.sort();
           setIndexAttributes(sortedOptions);
@@ -227,7 +229,7 @@ function SearchApp({ orgData, spaceData }: SearchAppProps) {
             'ErrorToast.title',
             response.status,
             response.statusText,
-            response.data.errorCode,
+            response.data.errorCode
           );
       });
     }
@@ -246,14 +248,14 @@ function SearchApp({ orgData, spaceData }: SearchAppProps) {
   }, [selectedFilters]);
 
   return (
-    <div className="my-6">
+    <div className='my-6'>
       {dataOverlayComponent ? (
-        <Container fluid className="p-0 flex-row h-100">
+        <Container fluid className='p-0 flex-row h-100'>
           <Row>
             <Col
               xl={{ span: 10, offset: 1 }}
               xs={{ span: 12, offset: 0 }}
-              className="px-0"
+              className='px-0'
             >
               <MeasurementInfoOverlay
                 data={dataOverlayComponent}
@@ -263,8 +265,8 @@ function SearchApp({ orgData, spaceData }: SearchAppProps) {
           </Row>
         </Container>
       ) : (
-        <Container fluid className="p-0 flex-row h-100">
-          <Row className="mx-0">
+        <Container fluid className='p-0 flex-row h-100'>
+          <Row className='mx-0'>
             <SearchBar
               searchInputBasic={
                 <SearchInputBasic
@@ -297,11 +299,11 @@ function SearchApp({ orgData, spaceData }: SearchAppProps) {
 
           {selectedFilters.length > 0 &&
             selectedFilters[0].property !== '_all_fields' && (
-              <Row className="m-0">
+              <Row className='m-0'>
                 <Col
                   xl={{ span: 8, offset: 2 }}
                   xs={{ span: 12, offset: 0 }}
-                  className="my-4 p-0"
+                  className='my-4 p-0'
                 >
                   <InputChipField
                     selectedFilters={selectedFilters}
@@ -316,17 +318,17 @@ function SearchApp({ orgData, spaceData }: SearchAppProps) {
               </Row>
             )}
           {hitCount && hitCount !== 0 ? (
-            <Row className="mx-0 mt-3 mb-6">
+            <Row className='mx-0 mt-3 mb-6'>
               <Col
                 xl={{ span: 10, offset: 1 }}
                 xs={{ span: 12, offset: 0 }}
-                className="px-0"
+                className='px-0'
               >
                 <CustomTable
                   data={tableData}
                   columns={columnData}
                   defaultColumnsVisibility={defaultColumnsVisibility}
-                  tableName="searchapp"
+                  tableName='searchapp'
                   overlayComponent
                   onDataOverlayComponent={setDataOverlayComponent}
                   showColumnsFiltering
