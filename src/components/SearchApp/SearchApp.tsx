@@ -30,6 +30,7 @@ import {
   Organization,
   Space,
   MassData,
+  QueryInput,
 } from '@customTypes/index';
 import {
   getMetaData,
@@ -51,7 +52,7 @@ const columnHelper = createColumnHelper<MeasurementIndex>();
 function SearchApp({ orgData, spaceData }: SearchAppProps) {
   const isMounted = useRef(false);
   const { formatMessage } = useIntl();
-
+  const [isInitialSearch, setIsInitialSeach] = useState(false);
   // Initial setup for index name based on orgData & spaceData.
   // TODO Async await - orgdata not available on reload
   const assembleIndexName = (): string => {
@@ -81,13 +82,14 @@ function SearchApp({ orgData, spaceData }: SearchAppProps) {
   );
   useEffect(() => {
     setIndexName(assembleIndexName());
+    setIsInitialSeach(true);
   }, [orgData, spaceData]);
 
   const [indexAttributes, setIndexAttributes] = useState<string[]>([]);
   const [reducedIndexAttributes, setReducedIndexAttributes] = useState<
     string[]
   >([]);
-  const [isIniialSearch, setIsInitialSeach] = useState(true);
+
   const [criteria, setCriteria] = useState<Criteria[]>();
   const [selectedFilters, setSelectedFilters] = useState<Filter[]>([]);
   const [tableData, setTableData] = useState<MeasurementIndex[]>([]);
@@ -185,7 +187,7 @@ function SearchApp({ orgData, spaceData }: SearchAppProps) {
 
   const onSubmit = (event?: React.SyntheticEvent): void => {
     event?.preventDefault();
-    const queryInput = {
+    let queryInput: QueryInput = {
       index_name: indexName.replace(
         '.',
         ''
@@ -194,8 +196,15 @@ function SearchApp({ orgData, spaceData }: SearchAppProps) {
       filter: selectedFilters,
     };
 
+    if (isInitialSearch) {
+      queryInput = {
+        ...queryInput,
+        sort: [{ createdAt: { order: 'desc' } }],
+        size: 25,
+      };
+    }
+
     getMetaData(queryInput).then((response) => {
-      console.log(`queryInpunt: ${JSON.stringify(queryInput)}`);
       if (response.ok) {
         createColumns();
         setTableData(response.data.hits);
@@ -209,6 +218,10 @@ function SearchApp({ orgData, spaceData }: SearchAppProps) {
           response.data.errorCode
         );
     });
+
+    if (isInitialSearch) {
+      setIsInitialSeach(false);
+    }
   };
 
   // Fetch filter criteria / columnnames on component mount.
@@ -234,7 +247,15 @@ function SearchApp({ orgData, spaceData }: SearchAppProps) {
       });
     }
   }, [criteria, indexName, isAdvancedSearchActive]);
+  // Start initial Search
 
+  useEffect(() => {
+    if (isInitialSearch) {
+      setSearchValue('*');
+      onSubmit();
+    }
+    isMounted.current = true;
+  }, [isInitialSearch]);
   // Fetch metadata when selected filters or other dependencies change.
   useEffect(() => {
     if (

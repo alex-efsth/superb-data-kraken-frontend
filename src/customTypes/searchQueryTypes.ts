@@ -45,6 +45,8 @@ export interface QueryInput {
   resultProperties: string[];
   filter: Filter[];
   aggregations?: Aggregations[];
+  sort?: { [key: string]: { order: 'asc' | 'desc' } }[];
+  size?: number;
 }
 
 export interface Criteria {
