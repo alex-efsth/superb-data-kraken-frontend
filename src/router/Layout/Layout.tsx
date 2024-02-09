@@ -17,6 +17,8 @@ limitations under the License.
 import { Navbar } from '@components/index';
 import { Container, Row, Col } from 'react-bootstrap';
 import { Outlet } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 interface LayoutProps {
   onLanguageChange: (language: string) => void;
 }
@@ -31,6 +33,7 @@ function Layout({ onLanguageChange }: LayoutProps) {
           <Outlet />
         </Col>
       </Row>
+      <ToastContainer />
     </Container>
   );
 }

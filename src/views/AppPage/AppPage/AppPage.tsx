@@ -28,8 +28,6 @@ import React, {
 import { useIntl } from 'react-intl';
 import { useQuery } from '@tanstack/react-query';
 import { useParams } from 'react-router-dom';
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 import { LoadingIndicator, Tabs } from '@components/index';
 import {
   OrgaRoleType,
@@ -219,7 +217,7 @@ function AppPage() {
               return intlWrapper(
                 'AppPage.Tabs.app-disabled-capabilities-org',
                 capabilities
-            );
+              );
             if (roles && !capabilities)
               return intlWrapper('AppPage.Tabs.app-disabled-roles', roles);
             return undefined;
@@ -302,7 +300,6 @@ function AppPage() {
           />
         )}
       </div>
-      <ToastContainer />
     </div>
   );
 }
